@@ -45,32 +45,56 @@ class Vampire {
   // * when comparing Ansel and Sarah, Ansel is the closest common anscestor.
   // * when comparing Ansel and Andrew, Ansel is the closest common anscestor.
   closestCommonAncestor(vampire) {
-    let currentVampire;
-    let lessSeniorVampire;
-
-    // see which is more senior
-    if (this.isMoreSeniorThan(vampire)) {
-      currentVampire = this;
-      lessSeniorVampire = vampire;
-    } else {
-      currentVampire = vampire;
-      lessSeniorVampire = this;
+    // if two same vampires
+    if (this === vampire) {
+      return this;
     }
 
-    const ancestor = currentVampire;
-    let queue = [currentVampire];
+    // direct ancesor case
+    if (this.hasChildren(vampire)) {
+      return this;
+    }
+    if (vampire.hasChildren(this)) {
+      return vampire;
+    }
 
-    // BFS search
-    while (queue) {
-      currentVampire = queue.unshift()
-      if (currentVampire.offspring.includes(lessSeniorVampire)) {
+    // non-direct case
+    let ancestor = this;
+    while (ancestor !== null) {
+      if (ancestor.hasChildren(vampire)) {
         return ancestor;
-      } else {
-        queue = queue.concat(currentVampire.offspring);
       }
+      ancestor = ancestor.creator;
+    }
+  }
+
+  // BFS search
+  hasChildren(vampire) {
+    let queue = [this];
+    let currentVampire;
+
+    while (queue.length !== 0) {
+      currentVampire = queue.shift();
+      if (currentVampire.offspring.includes(vampire)) {
+        return this;
+      }
+      queue = queue.concat(currentVampire.offspring);
     }
   }
 }
+
+rootVampire = new Vampire("root");
+offspring1 = new Vampire("a");
+offspring2 = new Vampire("b");
+offspring3 = new Vampire("c");
+
+rootVampire.addOffspring(offspring1);
+rootVampire.addOffspring(offspring2);
+offspring2.addOffspring(offspring3);
+
+console.log(offspring3.closestCommonAncestor(offspring2));
+
+// console.log(rootVampire.hasChildren(offspring1));
 
 module.exports = Vampire;
 
