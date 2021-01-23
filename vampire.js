@@ -68,7 +68,7 @@ class Vampire {
     }
   }
 
-  // BFS search
+  // BFS search to check all descendents
   hasChildren(vampire) {
     let queue = [this];
     let currentVampire;
