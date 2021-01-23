@@ -37,23 +37,6 @@ class Vampire {
     return this.numberOfVampiresFromOriginal < vampire.numberOfVampiresFromOriginal;
   }
 
-  /** Tree traversal methods **/
-
-  // Returns the vampire object with that name, or null if no vampire exists with that name
-  vampireWithName(name) {
-    
-  }
-
-  // Returns the total number of vampires that exist
-  get totalDescendents() {
-    
-  }
-
-  // Returns an array of all the vampires that were converted after 1980
-  get allMillennialVampires() {
-    
-  }
-
   /** Stretch **/
 
   // Returns the closest common ancestor of two vampires.
@@ -98,20 +81,43 @@ class Vampire {
       queue = queue.concat(currentVampire.offspring);
     }
   }
+
+  // Returns the vampire object with that name, or null if no vampire exists with that name
+  vampireWithName(name) {
+    if (this.name === name) {
+      return this;
+    }
+    for (const child of this.offspring) {
+      if (child.name === name) {
+        return child;
+      }
+      if (child.vampireWithName(name) !== null) {
+        return child.vampireWithName(name);
+      }
+    }
+    return null;
+  }
+
+  // Returns the total number of vampires that exist
+  get totalDescendents() {
+    let count = 0;
+    for (const child of this.offspring) {
+      count += child.totalDescendents + 1;
+    }
+    return count;
+  }
+
+  // Returns an array of all the vampires that were converted after 1980
+  get allMillennialVampires() {
+    let millenials = [];
+    for (const child of this.offspring) {
+      if (child.yearConverted > 1980) {
+        millenials.push(child);
+      }
+      millenials = millenials.concat(child.allMillennialVampires);
+    }
+    return millenials;
+  }
 }
 
-rootVampire = new Vampire("root");
-offspring1 = new Vampire("a");
-offspring2 = new Vampire("b");
-offspring3 = new Vampire("c");
-
-rootVampire.addOffspring(offspring1);
-rootVampire.addOffspring(offspring2);
-offspring2.addOffspring(offspring3);
-
-console.log(offspring3.closestCommonAncestor(offspring2));
-
-// console.log(rootVampire.hasChildren(offspring1));
-
 module.exports = Vampire;
-
